@@ -8,7 +8,7 @@
 6. Liberar para o usuário
 
 ### 1. Premissas
-- Antes de iniciar o desenvolvimento **colocar o incidente `EM PROGRAMAÇÃO`**.
+- Antes de iniciar o desenvolvimento colocar o incidente **`EM PROGRAMAÇÃO`**.
 
 ### 2. Alterar
 - Executar o ícone `GIS DESENV`
@@ -33,5 +33,5 @@
 - Testar o programa
 
 ### 6. Liberar para o usuário
-- Colocar o incidente **EM VALIDAÇÃO**, salientando que o usuário deve validar utilizando o ambiente de testes
+- Colocar o incidente **`EM VALIDAÇÃO`**, salientando que o usuário deve validar utilizando o ambiente de testes
 - Seguir adiante e atender outro `SDT` enquanto aguarda o retorno da validação :-)
