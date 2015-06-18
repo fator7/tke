@@ -32,6 +32,8 @@
 - Informar o nome do programa a ser testado e pressionar `ENTER`
 - Testar o programa
 
+> **Dica**: para confirmar que suas alterações foram compiladas e transferidas para o ambiente de testes, execute o programa (individualmente ou pelo menu), pressione `F2`e acesse o menu `8` (`Informações Técnicas`), verificando se o usuário e horário da última compilação coincidem com o seu.
+
 ### 6. Liberar para o usuário
 - Colocar o incidente **`EM VALIDAÇÃO`**, salientando que o usuário deve validar utilizando o ambiente de testes
 - Seguir adiante e atender outro `SDT` enquanto aguarda o retorno da validação :-)
