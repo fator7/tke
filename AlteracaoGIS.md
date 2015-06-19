@@ -42,7 +42,8 @@
 ### 7. Liberar em produção
 - Após o usuário validar o incidente, abrir novamente o GIS e pressionar `p` para selecionar a opção `Transferir programas para a produção` e após `ENTER`
 - Informar o nome do programa a ser transferido e pressionar `ENTER`
-  - Caso ocorra o erro `Error starting the program shown below! atup.bat` no `Netterm`, verificar se o fonte foi atualizado em `G:\GIS\fontes-p`. Em caso negativo, entrar em contato com o departamento de TI
 - Alterar o incidente para a situação **`FECHADO`**, informando que já foi liberado em produção
+
+> **Dica**: Caso ocorra o erro `Error starting the program shown below! atup.bat` no `Netterm`, verifique se o fonte foi atualizado em `G:\GIS\fontes-p`. Em caso negativo, entre em contato com o departamento de TI.
 
 FIM! :-)
