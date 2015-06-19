@@ -5,8 +5,8 @@
 3. Compilar
 4. Transferir
 5. Testar
-6. Liberar para o usuário testar
-7. Liberar em produção
+6. Liberar para testes
+7. Liberar para produção
 
 ### 1. Premissas
 - Antes de iniciar o desenvolvimento colocar o incidente **`EM PROGRAMAÇÃO`**.
@@ -35,11 +35,11 @@
 
 > **Dica**: para confirmar que suas alterações foram compiladas e transferidas para o ambiente de testes, execute o programa (individualmente ou pelo menu), pressione `F2`e acesse o menu `8` (`Informações Técnicas`), verificando se o usuário e horário da última compilação coincidem com o seu.
 
-### 6. Liberar para o usuário testar
+### 6. Liberar para testes
 - Colocar o incidente **`EM VALIDAÇÃO`**, salientando que o usuário deve validar utilizando o ambiente de testes
 - Seguir adiante e atender outro `SDT` enquanto aguarda o retorno da validação :-)
 
-### 7. Liberar em produção
+### 7. Liberar para produção
 - Após o usuário validar o incidente, abrir novamente o GIS e pressionar `p` para selecionar a opção `Transferir programas para a produção` e após `ENTER`
 - Informar o nome do programa a ser transferido e pressionar `ENTER`
 - Alterar o incidente para a situação **`FECHADO`**, informando que já foi liberado em produção
