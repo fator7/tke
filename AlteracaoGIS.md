@@ -9,7 +9,13 @@
 7. Liberar para produção
 
 ### 1. Premissas
-- Antes de iniciar o desenvolvimento colocar o incidente **`EM PROGRAMAÇÃO`**.
+- Antes de iniciar o desenvolvimento:
+  1. Verificar se o último comentário de alteração é recente;
+  2. Sim? verificar situação do incidente indicado no comentário:
+    1. Se o mesmo estiver concluído, dar prosseguimento no atendimento;
+    2. Senão, entrar em contato com o atendente e ver situação;
+  3. Não? entrar em contato com o atendente e ver situação;
+  4. Após essas verificar essas situações, se o programa estiver liberado para aleração, colocar o incidente **`EM PROGRAMAÇÃO`**.
 
 ### 2. Alterar
 - Executar o ícone `GIS DESENV`
