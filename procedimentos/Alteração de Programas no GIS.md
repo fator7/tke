@@ -47,5 +47,3 @@
 > **Dica**: Caso ocorra o erro `Error starting the program shown below! atup.bat` no `Netterm`, verifique se o fonte foi atualizado em `G:\GIS\fontes-p`. Em caso negativo, entre em contato com o departamento de TI.
 
 FIM! :-)
-
-![Ok! :-)](http://myreactiongifs.com/gifs/thumbsupcomputerkid.gif)
