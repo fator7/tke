@@ -1,5 +1,5 @@
 <script language="SpeedScript">
-/*---------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
   Empresa...: ThyssenKrupp Elevadores
   Sistema...: AIT - Aplicacoes Integradas TKE
   Programa..: ait_MODX9.html
@@ -8,27 +8,31 @@
   Data......: 99/99/9999
 
   Data       Autor    Alteracao
-  ---------- -------- -------------------------------------------------------
+  ---------- -------- ----------------------------------------------------------
   99/99/9999 NOME     SDT 999999 - XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
------------------------------------------------------------------------------*/
+------------------------------------------------------------------------------*/
 
-/* Literais ---------------------------------------------------------------- */
+/* Literais ----------------------------------------------------------------- */
 &scoped-define IMG-DETALHE  '<img src="/ait/images/detalhe.gif"/>'
 &scoped-define IMG-ATIVO    '<img src="/ait/images/marcadorok.gif"/>'
 &scoped-define IMG-INATIVO  '<img src="/ait/images/marcadorproibido.gif"/>'
 &scoped-define LBL-CONCEITO sis_idioma("lblPacote")
 
-/* Includes ---------------------------------------------------------------- */
+/* Includes ----------------------------------------------------------------- */
 {include_variaveis_globais.i}
 {include_idioma.i}
 
-/* Funções Importadas ------------------------------------------------------ */
+/* Funções Importadas ------------------------------------------------------- */
 {include_utils.i debug}
 
-/* Funções Locais ---------------------------------------------------------- */
-function minhaFuncao returns char (input f-parametro as char) forward.
+/* Funções ------------------------------------------------------------------ */
+function minhaFuncao returns char (input f-param as char) forward.
 
-/* Variáveis Locais -------------------------------------------------------- */
+/* Variáveis Compartilhadas ------------------------------------------------- */
+def new global shared var v1  as char  no-undo init "".
+def     global shared var v2  as int   no-undo init 0.
+
+/* Variáveis Globais -------------------------------------------------------- */
 def var vacao                 as char  no-undo init "montar t-princ".
 def var vtableid              as char  no-undo init "table01".
 def var vcont-reg             as int   no-undo init 0.
@@ -177,6 +181,8 @@ end procedure.
 
 <script language="SpeedScript">
 
+/* Procedures Principais ---------------------------------------------------- */
+
 /*------------------------------------------------------------------------------
 Objetivo: Exibir uma lista com os registros existentes.
 ------------------------------------------------------------------------------*/
@@ -198,12 +204,6 @@ procedure p-editar:
 end procedure.
 
 /*------------------------------------------------------------------------------
-Objetivo: Montar o form para edição para edição de um registro (novo ou edição).
-------------------------------------------------------------------------------*/
-procedure p-formulario:
-end procedure.
-
-/*------------------------------------------------------------------------------
 Objetivo: Validar e persistir a criação de um novo registro.
 ------------------------------------------------------------------------------*/
 procedure p-criar:
@@ -220,4 +220,22 @@ Objetivo: Validar a operação e excluir um registro existente.
 ------------------------------------------------------------------------------*/
 procedure p-excluir:
 end procedure.
+
+/* Procedures Auxiliares ---------------------------------------------------- */
+
+/*------------------------------------------------------------------------------
+Objetivo: Montar o form para edição para edição de um registro (novo ou edição).
+------------------------------------------------------------------------------*/
+procedure p-formulario:
+end procedure.
+
+/* Implementação de Funções ------------------------------------------------- */
+
+/*------------------------------------------------------------------------------
+Objetivo: Fazer alguma coisa.
+------------------------------------------------------------------------------*/
+function minhaFuncao returns char (input f-param as char):
+   return f-param.
+end function.
+
 </script>
