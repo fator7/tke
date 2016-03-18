@@ -3,16 +3,16 @@
   Empresa...: ThyssenKrupp Elevadores
   Sistema...: AIT - Aplicacoes Integradas TKE
   Programa..: ait_MODX9.html
-  Descricao.: xxxxxxxxxxxxxxx
+  Descricao.: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
   Autor.....: NOME (DEPARTAMENTO ou EMPRESA)
   Data......: 99/99/9999
 
   Data       Autor    Alteracao
   ---------- -------- -------------------------------------------------------
-  99/99/9999 NOME     SDT 99999 xxxxxxxxxxxxxxx
+  99/99/9999 NOME     SDT 999999 - XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 -----------------------------------------------------------------------------*/
 
-/* Definicao Constantes ---------------------------------------------------- */
+/* Literais ---------------------------------------------------------------- */
 &scoped-define IMG-DETALHE  '<img src="/ait/images/detalhe.gif"/>'
 &scoped-define IMG-ATIVO    '<img src="/ait/images/marcadorok.gif"/>'
 &scoped-define IMG-INATIVO  '<img src="/ait/images/marcadorproibido.gif"/>'
@@ -22,25 +22,30 @@
 {include_variaveis_globais.i}
 {include_idioma.i}
 
-/* Definicao Funcoes ------------------------------------------------------- */
-{include_utils.i iif}
-{include_utils.i helpIcon}
+/* Funções Importadas ------------------------------------------------------ */
+{include_utils.i debug}
 
-function trataTexto return char (input f-texto as char) forward.
+/* Funções Locais ---------------------------------------------------------- */
+function minhaFuncao returns char (input f-parametro as char) forward.
 
-/* Definicao Variaveis Locais ---------------------------------------------- */
+/* Variáveis Locais -------------------------------------------------------- */
 def var vacao                 as char  no-undo init "montar t-princ".
 def var vtableid              as char  no-undo init "table01".
-def var voperacao             as char  no-undo.
-def var vpesquisar            as char  no-undo.
-def var vmodo                 as char  no-undo.
-def var vmsg                  as char  no-undo.
-def var vcont                 as int   no-undo.
-def var vcont-reg             as int   no-undo.
+def var vcont-reg             as int   no-undo init 0.
 
-/* Definicao Temp-Table ---------------------------------------------------- */
-/* Definicao Buffer -------------------------------------------------------- */
-/* Definicao Stream -------------------------------------------------------- */
+/* Buffers ----------------------------------------------------------------- */
+def buffer btabela1 for tabela1.
+def buffer btabela2 for tabela2.
+
+/* Temp-Table -------------------------------------------------------------- */
+def temp-table tt-coisas no-undo
+   field tt-rowid  as rowid
+   field tt-campo1 as char
+   field tt-campo2 as int
+   field tt-campo3 as decimal
+   index tt01 is primary unique tt-rowid.
+
+/* Stream ------------------------------------------------------------------ */
 def stream st-in.
 
 /*------------------------------------------------------------------------------
@@ -49,7 +54,8 @@ Objetivo:   Processa Requisição HTML
 procedure output-headers:
    /* remove linhas de comentario HTML de creditos do StarWeb no inicio e fim do programa */
    desativarHeaderPadraoDoSWFW().
-   /* manipular cookies via progress será feito aqui */
+
+   /* manipulações de cookies por parte do servidor StarWeb devem ocorrer neste ponto */
 end procedure.
 </script>
 
@@ -65,13 +71,15 @@ end procedure.
       <style type="text/css">
       </style>
       <script type="text/javascript">
-         // Definição de funções globais
+        // defina suas funções neste ponto
+
          $(document).ready(function() {
-            sis_pageLoaded(); 
-            sis_addMsgStatusBar(); 
-            sis_show_messages(); 
-            setFocus();  
-            //adicione seus scripts depois dessa linha
+            sis_pageLoaded();
+            sis_addMsgStatusBar();
+            sis_show_messages();
+            setFocus();
+
+            // invoque suas funções DEPOIS deste ponto
          });
       </script>
    </head>
@@ -109,8 +117,8 @@ end procedure.
                            run p-principal.
                            leave loop.
                         end.
-                        when "detalhar" then do:
-                           run p-detalhar.
+                        when "editar" then do:
+                           run p-editar.
                            leave loop.
                         end.
                         when "novo" then do:
@@ -133,7 +141,7 @@ end procedure.
                               next.
                            end.
                            verros = true.
-                           vacao = "detalhar".
+                           vacao = "editar".
                         end.
                         when "excluir" then do:
                            run p-excluir.
@@ -142,7 +150,7 @@ end procedure.
                               next.
                            end.
                            verros = true.
-                           vacao = "detalhar".
+                           vacao = "editar".
                         end.
                         otherwise do:
                            sis_queue_message("aviso", sis_idioma("msgNaoAchouAcao"), false).
@@ -157,26 +165,59 @@ end procedure.
       <script type="text/javascript">
          $(document).ready(function() {
             // Use este espaço para fazer coisas legais
+
+            // Invoca a suíte de debug
+            if (` string(is-debug(), "true/false") `) {
+               $("#debug").html("` output-debug() `");
+            }
          });
       </script>
    </body>
 </html>
+
 <script language="SpeedScript">
+
+/*------------------------------------------------------------------------------
+Objetivo: Exibir uma lista com os registros existentes.
+------------------------------------------------------------------------------*/
 procedure p-principal:
 end procedure.
 
+/*------------------------------------------------------------------------------
+Objetivo: Exibir tela para inclusão de um novo registro.
+------------------------------------------------------------------------------*/
 procedure p-novo:
+   run p-formulario.
 end procedure.
 
+/*------------------------------------------------------------------------------
+Objetivo: Exibir tela para para edição de um registro já existente.
+------------------------------------------------------------------------------*/
+procedure p-editar:
+   run p-formulario.
+end procedure.
+
+/*------------------------------------------------------------------------------
+Objetivo: Montar o form para edição para edição de um registro (novo ou edição).
+------------------------------------------------------------------------------*/
+procedure p-formulario:
+end procedure.
+
+/*------------------------------------------------------------------------------
+Objetivo: Validar e persistir a criação de um novo registro.
+------------------------------------------------------------------------------*/
 procedure p-criar:
 end procedure.
 
-procedure p-detalhar:
-end procedure.
-
+/*------------------------------------------------------------------------------
+Objetivo: Validar e persistir a atualização de um registro existente.
+------------------------------------------------------------------------------*/
 procedure p-atualizar:
 end procedure.
 
+/*------------------------------------------------------------------------------
+Objetivo: Validar a operação e excluir um registro existente.
+------------------------------------------------------------------------------*/
 procedure p-excluir:
 end procedure.
 </script>
