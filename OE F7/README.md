@@ -14,7 +14,7 @@
 	|PATH     |%PATH%;%DLC%;%DLC%\bin|
 
 ### 2. Copiar Arquios
-- Copiar pasta <link para arquivos> em c:\users\teu.usuario\<onde desejar>
+- Copiar pasta os arquivos do OE F7 em c:\users\teu.usuario\<onde desejar>
 
 ### 3. Configurações
 - Alterar iniciar em: C:\Users\teu.usuario\<onde desejar>\icone
