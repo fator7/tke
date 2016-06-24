@@ -8,10 +8,11 @@
 ### 1. Setar váriaveis de ambiente progress
 - Em Painel de Controle\Sistema e Segurança\Sistema\Configurações Avançadas do Sistema; 
 - Aba Avançado, botão Variáveis de Ambiente, Novo...
-        |Variável |Valor                 |
-        |---------|----------------------|
-	|DLC      |C:\DLC102B            |
-	|PATH     |%PATH%;%DLC%;%DLC%\bin|
+
+|Variável |Valor                 |
+|:---------|:----------------------|
+|DLC      |C:\DLC102B            |
+|PATH     |%PATH%;%DLC%;%DLC%\bin|
 
 ### 2. Copiar Arquios
 - Copiar pasta os arquivos do OE F7 em c:\users\teu.usuario\<onde desejar>
