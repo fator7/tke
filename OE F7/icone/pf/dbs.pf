@@ -1,0 +1,26 @@
+#-mmax 8912
+#-s 200
+#-TB 31
+#-TM 32
+-d dmy
+#-E
+#-Bt 2048
+#-Mm 8192
+-cpstream iso8859-1
+-cpterm iso8859-1
+-inp 32000
+#-h 50
+-T c:\temp
+#-zn
+
+
+
+# ************************ BASE DEV ************************
+#-db dbs -H srvhpi -S dbsd -U costa -P gis
+
+# ************************ GUS DEV *************************
+#-db dbsu -H srvhpu -S 7010
+
+
+# *********************** BASE DELTA ***********************
+#-db C:\Users\giuliano.borowski\wrk\db\dbsF7 -ld dbsF7 -1
