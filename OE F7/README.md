@@ -25,7 +25,7 @@
 	- Fica: PROPATH=.,C:\Users\teu.usuario\<pasta onde está o carrega-bancos.p>,t:\,t:\includes,g:\gis\fontes-t,g:\gis\fontes-p,g:\gis\....
 
 ### 4. Criar Banco
-- Dentro do diretório db, executar o resetDB.bat, recriará o banco F7 toda vez que executálo.
+- Dentro do diretório db, executar o resetDB.bat, recriará o banco F7 toda vez que executá-lo.
 
 > **Obs**: Como eu já tinha a estrutura criada, copiei os arquivos para o citrix e saí executando, tentei descrever aqui todos os passos necessário,
 mas pode ser que faltou alguma coisa, vamos ajustando a medida que forem aparecendo os problemas... 
