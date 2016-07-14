@@ -45,7 +45,7 @@ procedure p-carrega:
    do with frame f-main:
       if l-banco-dev:checked then connect value("-db dbs -ld dev -H srvhpi -S dbsd -U costa -P gis").
       if l-banco-gus:checked then connect value("-db dbsu -ld gusd -H srvhpu -S 7010").
-      if l-banco-f7:checked  then connect value("-db P:\SVNUsers\" + OS-GETENV("USERNAME") +"\db\dbsf7.db -ld f7 -1").
+      if l-banco-f7:checked  then connect value("-db P:\SVNUsers\" + OS-GETENV("USERNAME") + "\db\dbsf7.db -ld f7 -1").
       if l-Banco-prod:checked then connect value("-db dbs -ld prod -H srvhpi -S dbs -U costa -P gis").
       if l-Banco-sdt:checked then connect value("-db sdt -H srvhpi -S sdt").
       if l-banco-gus-prod:checked then connect value("-db dbsu -ld gusp -H srvhpu -S dbsun").
