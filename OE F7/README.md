@@ -22,7 +22,7 @@
 - Fazer o download dos arquivos de configuração em https://github.com/fator7/tke/archive/master.zip
 - Copiar o conteúdo da pasta `OE F7` (dentro do arquivo `zip`) para `P:\SVNUsers\<seu.usuario>\`
 
->>> Evite armazenar seus arquivos na unidade `C:\`. Há relatos de problemas bizarros relacionados a isto. Utilize a pasta `P:\SVNUsers\`.
+> Evite armazenar seus arquivos na unidade `C:\`. Há relatos de problemas bizarros relacionados a isto. Utilize a pasta `P:\SVNUsers\`.
 
 ### 3. Criar banco
 - Execute o script `P:\SVNUsers\<seu.usuario>\db\resetDB.bat`
