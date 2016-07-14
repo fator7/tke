@@ -20,20 +20,20 @@
 - Fazer o download dos arquivos de configuração em https://github.com/fator7/tke/archive/master.zip
 - Extrair o conteúdo da pasta `OE F7` (dentro do arquivo `zip`) para `P:\SVNUsers\<seu.usuario>\`
 
-  > A estrutura de diretórios ficará assim:
-  > ```
-  > P:\SVNUsers\<seu.usuario>\
-  > ├── db
-  > |   ├── dbsF7.st
-  > |   └── resetDB.bat
-  > └── icone
-  >     ├── AIT F7.lnk
-  >     |── carrega-bancos.p
-  >     ├── ini
-  >     |   └── f7.ini
-  >     └── pf
-  >         └── dbs.pf
-  > ```
+  A estrutura de diretórios ficará assim:
+  ```
+  P:\SVNUsers\<seu.usuario>\
+  ├── db
+  |   ├── dbsF7.st
+  |   └── resetDB.bat
+  └── icone
+      ├── AIT F7.lnk
+      |── carrega-bancos.p
+      ├── ini
+      |   └── f7.ini
+      └── pf
+          └── dbs.pf
+  ```
 
 > Evite armazenar seus arquivos na unidade `C:\`. Há relatos de problemas bizarros relacionados a isto. Utilize a pasta `P:\SVNUsers\`.
 
