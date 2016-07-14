@@ -28,4 +28,4 @@
 - Execute o script `P:\SVNUsers\<seu.usuario>\db\resetDB.bat`
 
 ### 4. Testar
-- Abra o atalho `P:\SVNUsers\<seu.usuario>\AIT F7.lnk`, selecione o banco da `Fator 7` e verifique as tabelas
+- Abra o atalho `P:\SVNUsers\<seu.usuario>\icone\AIT F7.lnk`, selecione o banco da `Fator 7` e verifique as tabelas
