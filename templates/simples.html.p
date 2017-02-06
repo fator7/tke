@@ -11,6 +11,7 @@
   ---------- -------- ----------------------------------------------------------
   99/99/9999 NOME     SDT 999999 - XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 ------------------------------------------------------------------------------*/
+create widget-pool.
 
 /* Literais ----------------------------------------------------------------- */
 &scoped-define IMG-DETALHE  '<img src="/ait/images/detalhe.gif"/>'
