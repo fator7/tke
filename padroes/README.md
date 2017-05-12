@@ -7,4 +7,4 @@
 texto alinhado a esquerda.
 numeros alinhados a direita.
 
-(https://github.com/fator7/tke/blob/master/padroes/img/print_tab.JPG?raw=true)
+![Alinhamento_Texto](https://github.com/GianW/tke/blob/master/padroes/img/print_tab.JPG?raw=true)
