@@ -1,0 +1,632 @@
+<script language="SpeedScript">
+/*------------------------------------------------------------------------------
+  Empresa...: ThyssenKrupp Elevadores
+  Sistema...: AIT - Aplicacoes Integradas TKE
+  Programa..: ait_smgm2.html
+  Descricao.: Cadastro de Processos do Smart Glass
+  Autor.....: Rodrigo Krigger (Fator 7)
+  Data......: 12/10/2017
+  Menu......: Service Desk » COS » Smart Glass » Cadastros » Processos
+  Jira......: WEB-930
+
+  Data       Autor    Alteracao
+  ---------- -------- ----------------------------------------------------------
+
+-----------------------------------------------------------------------------*/
+create widget-pool.
+
+/* Constantes -------------------------------------------------------------- */
+&scoped-define LBL-CONCEITO sis_idioma("lblProcesso")
+&scoped-define LBL-TITULO   sis_idioma("mnuProcessos")
+&scoped-define IMG-DETALHE  '<img src="/ait/images/detalhe.gif"/>'
+&scoped-define IMG-ATIVO    '<img src="/ait/images/marcadorok.gif"/>'
+&scoped-define IMG-INATIVO  '<img src="/ait/images/marcadorproibido.gif"/>'
+&scoped-define CHAVE-BLOQ   substitute('smgm2_&1', vsmgp-cod)
+&scoped-define TEMPO-BLOQ   20
+&scoped-define TABLE-WIDTH  760
+
+/* Includes ---------------------------------------------------------------- */
+{include_variaveis_globais.i}
+{include_idioma.i}
+
+/* Funções Importadas ------------------------------------------------------ */
+{include_utils.i helpIcon}
+{include_utils.i debug}
+{include_utils.i iif}
+{include_utils.i registroBloqueado}
+
+/* Funções ----------------------------------------------------------------- */
+function getUltimoCodigo returns int  forward.
+
+/* Variáveis Compartilhadas ------------------------------------------------ */
+/* Variáveis Locais -------------------------------------------------------- */
+def var vacao                 as char no-undo init "montar t-princ".
+def var vtableid              as char no-undo init "table01".
+def var vpesquisar            as char no-undo.
+def var vmodo                 as char no-undo.
+def var vmsg                  as char no-undo.
+def var vcont                 as int  no-undo.
+def var vcont-reg             as int  no-undo.
+def var vajax                 as log  no-undo.
+def var vsmgp-cod             as int  no-undo.
+def var vsmgp-nome            as char no-undo.
+def var vsmgp-prev            as log  no-undo.
+def var vsmgp-obra            as log  no-undo.
+def var vsmgp-ativo           as log  no-undo.
+
+/* Temp-Table -------------------------------------------------------------- */
+def temp-table tt-cadastro no-undo like smg-processo
+   field em-uso            as log
+   field em-exec           as log
+   index tt01              is primary unique smgp-cod
+   index tt02              smgp-nome.
+
+/* Buffers ----------------------------------------------------------------- */
+def buffer bf-smg-processo for smg-processo.
+
+/* Stream ------------------------------------------------------------------ */
+
+/*--------------------------------------------------------------------------
+Objetivo:   Processa Requisição HTML
+----------------------------------------------------------------------------*/
+procedure output-headers:
+   run define-header.
+   /* remove linhas de comentario HTML de creditos do StarWeb no inicio e fim do programa */
+   desativarHeaderPadraoDoSWFW().
+
+   assign vajax       = (get-value("ajax") = "yes")
+          vacao       = trim(get-value("acao"))
+          vmodo       = trim(get-value("modo"))
+          vpesquisar  = trim(get-value("pesquisar"))
+          vsmgp-cod   = int(trim(get-value("smgp_cod")))
+          vsmgp-nome  = trim(get-value("smgp_nome"))
+          vsmgp-prev  = (get-value("smgp_prev") = "yes")
+          vsmgp-obra  = (get-value("smgp_obra") = "yes")
+          vsmgp-ativo = (get-value("smgp_ativo") = "yes")
+          .
+end procedure.
+
+/*--------------------------------------------------------------------------
+Objetivo:   Procedimentos AJAX
+----------------------------------------------------------------------------*/
+if vajax then do:
+   /*
+   case vacao:
+      when "validateEmUso" then do:
+         if can-find(first smg-solicitacao no-lock where smg-solicitacao.smgp-cod = vsmgp-cod) then
+              {&out} substitute('~{"erro":"&1"~}', sis_idioma("msgImpossivelExcluirEmUsoNoSistema")).
+         else {&out} '~{~}'.
+      end.
+   end case.
+   */
+   return.
+end.
+</script>
+
+<!DOCTYPE html>
+<html>
+<head>
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta charset="iso8859-1"/>
+   <title>`sis_idioma("titJanela")`</title>
+   <link rel="stylesheet" type="text/css" href="/ait/javascript/jquery/ui/jquery-ui.min.css">
+   <link rel="stylesheet" type="text/css" href="/ait/css/estilo.css">
+   <script type="text/javascript" src="/ait/javascript/jquery/jquery-1.11.3.min.js"></script>
+   <script type="text/javascript" src="/ait/javascript/jquery/ui/jquery-ui-1.11.4.min.js"></script>
+   <script type="text/javascript">
+      $(document).ready(function() { sis_pageLoaded(); sis_addMsgStatusBar(); sis_show_messages(); setFocus(); });
+   </script>
+</head>
+<body class="body_1">
+<script language="SpeedScript">
+{include_javascript_cookie.i}
+{include_ajax.i}
+{include_tooltip.i}
+{include_botao.i}
+{include_mensagem.i}
+{include_status.i}
+{include_seguranca.i}
+{include_perm_prog.i}
+{include_log.i "menu"}
+{include_log.i "programa"}
+{include_browse2.i init}
+{include_ordenacao.i 1}
+{include_div_carregando.i}
+{include_div_areas_do_sistema.i}
+{include_bloqueio.i}
+</script>
+<script type="text/javascript">sis_pageLoading();</script>
+<div class="main-box">
+
+<script language="SpeedScript">
+/* ***************************** Main Block ***************************** */
+
+if vacao = "" then vacao = "montar t-princ".
+
+loop: do while true:
+   run p-carregar.
+   case vacao:
+
+      /* Tela Principal */
+      when "montar t-princ" then do:
+         run p-gera-t-princ.
+         leave loop.
+      end.
+
+      /* Tela Incluir */
+      when "incluir" then do:
+         run p-detalhe.
+         leave loop.
+      end.
+
+      /* Tela Editar */
+      when "editar" then do:
+         run p-detalhe.
+         leave loop.
+      end.
+
+      /* Ação Salvar */
+      when "salvar" then do:
+         run p-salvar.
+         if return-value = "erro":u then do:
+            vacao = vmodo.
+            run p-detalhe.
+            leave loop.
+         end.
+         else vacao = "montar t-princ".
+         next loop.
+      end.
+
+      /* Ação Excluir */
+      when "excluir" then do:
+         run p-excluir.
+         if return-value = "erro":u then
+              vacao = vmodo.
+         else vacao = "montar t-princ".
+         next loop.
+      end.
+
+      otherwise do:
+         sis_queue_message("aviso", sis_idioma("msgNaoAchouAcao"), false).
+         leave loop.
+      end.
+
+   end case. /* vacao */
+end. /* loop: do while true */
+
+
+/*-----------------------------------------------------------------------
+Objetivo: Exibir uma tabela com os registros existentes
+ ------------------------------------------------------------------------*/
+procedure p-gera-t-princ:
+
+</script>
+
+   <table border="0" width="100%">
+      <tr>
+         <td align="left" valign="top">
+            <h3 class="titulo_1">`{&LBL-TITULO}`
+               <script language="SpeedScript">{include_caminho_menu.i}</script>
+            </h3>
+
+            <form action="`selfURL`" method="post" id="generico" name="generico">
+               <input type="hidden" name="sis_menupath" value="`vsis-menupath`"/>
+               <div id="div_pag_tab01"></div>
+
+               <script language="SpeedScript">
+               /* renderiza cabeçalho de filtro */
+               run p-filtro.
+
+               {include_ordenacao.i 2 vtableid}
+               {include_paginador2.i 1 pag01 100 10}
+               {include_browse2.i start {&TABLE-WIDTH} 4 vtableid sis_pageLoading()}
+
+               assign v-brw-header-align[1] = 'center" width="8'        v-brw-header-text[1] = ""
+                      v-brw-header-align[2] = 'left" width="*'          v-brw-header-text[2] = sis_idioma("lblProcesso")
+                      v-brw-header-align[3] = 'center" width="8'        v-brw-header-text[3] = sis_idioma("lblPreventivo")
+                      v-brw-header-align[4] = 'center" width="8'        v-brw-header-text[4] = sis_idioma("lblAtivo")
+                      .
+               {include_browse2.i header}
+
+               for each tt-cadastro where
+                        tt-cadastro.smgp-nome matches "*" + vpesquisar + "*":
+
+                  vcont-reg = vcont-reg + 1.
+
+                  assign v-brw-datarow-link     = substitute("&1?sis_menupath=&2&&acao=editar&&smgp_cod=&3", selfURL, vsis-menupath, tt-cadastro.smgp-cod)
+                         v-brw-datarow-align[1] = 'left'                v-brw-datarow-text[1] = {&IMG-DETALHE}
+                         v-brw-datarow-align[2] = 'left'                v-brw-datarow-text[2] = trim(tt-cadastro.smgp-nome)
+                         v-brw-datarow-align[3] = 'center'              v-brw-datarow-text[3] = iif(tt-cadastro.smgp-preventivo, {&IMG-ATIVO}, "&nbsp")
+                         v-brw-datarow-align[4] = 'center'              v-brw-datarow-text[4] = iif(tt-cadastro.smgp-ativo, {&IMG-ATIVO}, {&IMG-INATIVO})
+                         .
+                  {include_paginador2.i 2 pag01}
+                  {include_browse2.i datarow}
+                  {include_paginador2.i 3 pag01}
+               end. /* for each tt-cadastro */
+
+               if vcont-reg = 0 then sis_queue_message("aviso", sis_idioma("msgNenhumRegistroEncontrado"), false).
+               {include_browse2.i end}
+               {include_paginador2.i 4 pag01}
+               {include_paginador2.i 5 pag01 760 div_pag_tab01}
+               </script>
+
+            </form>
+         </td>
+      </tr>
+   </table>
+
+   <script type="text/javascript">
+      sis_addButton(true, null, "btnIncluir", "btnIncluir", "`sis_idioma("btnIncluir")`", null, "botaoPequeno", null, "sis_addHiddenField(document.generico, 'acao', 'incluir'); document.generico.submit();", 9);
+      sis_addButton(true, null, "btnCancelar", "btnCancelar", "", "`sis_idioma("msgCliqueAquiSairTelaAtualRetornarTelaPrinc")`", "botaoPequeno btnSis btnCancelar", null, "location.href='`selfURL`?sis_menupath=`vsis-menupath`';", null);
+
+      $(document).ready(function() {
+         $("#countReg").html("`vcont-reg`");
+         // Invoca a suíte de debug
+         if (`string(is-debug(),"true/false")`) {
+            $("#debug").html("`output-debug()`");
+         }
+      });
+   </script>
+
+<script language="SpeedScript">
+end procedure. /* p-gera-t-princ */
+
+/*-----------------------------------------------------------------------
+Objetivo: Exibir tela de filtro.
+-------------------------------------------------------------------------*/
+procedure p-filtro:
+</script>
+   <table class="filtro cabecalho" border="0" cellspacing="0" cellpadding="2" width="`{&TABLE-WIDTH}`">
+      <tr class="cabecalho">
+         <td align="left">
+            <span>`sis_idioma("lblNome")`:&nbsp;</span>
+            <input type="text" class="field_enabled_1" name="pesquisar" size="20" value="`vpesquisar`"/>&nbsp;
+            <button class="btnIcon btnPesquisar" onclick="document.generico.paginapag01.value='1';" title="`sis_idioma('lblPesquisar')`"></button>
+         </td>
+         <td align="right">`sis_idioma("lblTotaldeRegistros")`:&nbsp;<span id="countReg"></span></td>
+      </tr>
+   </table>
+<script language="SpeedScript">
+end procedure.
+
+/*-----------------------------------------------------------------------
+Objetivo: Exibir tela para inclusão/alteração de registro.
+-------------------------------------------------------------------------*/
+procedure p-detalhe:
+
+   find first tt-cadastro no-error.
+
+   case vacao:
+      when "incluir" then do:
+
+      end.
+      when "editar"  then do:
+         {include_bloqtela.i
+            "{&CHAVE-BLOQ}"
+            "substitute(sis_idioma('msgRegistroBloqueadoPor'), vsis-nomeusuario)"
+            "PATH_INFO + '?' + QUERY_STRING"
+            "selfURL + '?sis_menupath=' + vsis-menupath"
+            "{&TEMPO-BLOQ}"
+         }
+      end.
+   end case.
+</script>
+
+   <table border="0" width="100%">
+      <tr>
+         <td align="left" valign="top">
+            <h3 class="titulo_1">`{&LBL-TITULO}`
+               <script language="SpeedScript">{include_caminho_menu.i}</script>
+            </h3>
+
+            <form id="generico" name="generico" action="`selfURL`" method="post">
+               <input type="hidden" name="sis_menupath" value="`vsis-menupath`"/>
+               <input type="hidden" name="modo" value="`vacao`"/>
+
+               <table border="0" class="normal">
+                  <tr>
+                     <td class="label_enabled_1" align="right">`sis_idioma("lblCodigo")`:</td>
+                     <td><input type="text" class="field_disabled_1" id="smgp_cod" name="smgp_cod" size="2" value="`iif(tt-cadastro.smgp-cod > 0, string(tt-cadastro.smgp-cod), '***')`" disabled/>&nbsp;`vsis-obrig`</td>
+                  </tr>
+                  <tr>
+                     <td class="label_enabled_1" align="right">`sis_idioma("lblNome")`:</td>
+                     <td><input type="text" class="field_enabled_1" id="smgp_nome" name="smgp_nome" maxlength="32" size="32" value="`tt-cadastro.smgp-nome`" `iif(vacao = 'editar', 'disabled', '')`/>&nbsp;`helpIcon(sis_idioma("lblDescricao"), sis_idioma("msgHelpDescricaoDoItem"))`&nbsp;`vsis-obrig`</td>
+                  </tr>
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td><input type="checkbox" class="field_enabled_1" id="smgp_prev" name="smgp_prev" value="yes" style="margin:0px;" `iif(tt-cadastro.smgp-preventivo, ' checked', '')`/>&nbsp;<label for="smgp_prev" class="label_enabled_1">`sis_idioma("lblPreventivo")`</label></td>
+                  </tr>
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td><input type="checkbox" class="field_enabled_1" id="smgp_obra" name="smgp_obra" value="yes" style="margin:0px;" `iif(tt-cadastro.smgp-obra-obrigatoria, ' checked', '')`/>&nbsp;<label for="smgp_obra" class="label_enabled_1">`sis_idioma("lblObrigatorioInformarObra")`</label></td>
+                  </tr>
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td><input type="checkbox" class="field_enabled_1" id="smgp_ativo" name="smgp_ativo" value="yes" style="margin:0px;" `iif(tt-cadastro.smgp-ativo, ' checked', '')` />&nbsp;<label for="smgp_ativo" class="label_enabled_1">`sis_idioma("lblAtivo")`</label></td>
+                  </tr>
+               </table>
+
+             </form>
+          </td>
+       </tr>
+   </table>
+
+   <script type="text/javascript">
+      var modo = "`vacao`",
+          smgp_cod = $("#smgp_cod"),
+          smgp_nome = $("#smgp_nome"),
+          smgp_prev = $("#smgp_prev"),
+          smgp_obra = $("#smgp_obra"),
+          smgp_ativo = $("#smgp_ativo");
+
+      sis_addButton(true, null, "btnSalvar", "btnSalvar", "`sis_idioma("btnSalvar")`", null, "botaoPequeno", null, "validaForm();", 9);
+      if(modo == "editar") sis_addButton(true, null, "btnExcluir", "btnExcluir", "`sis_idioma("btnExcluir")`", null, "botaoPequeno", null, "excluiRegistro();", null);
+      sis_addButton(true, null, "btnCancelar", "btnCancelar", "", "`sis_idioma("msgCliqueAquiSairTelaAtualRetornarTelaPrinc")`", "botaoPequeno btnSis btnCancelar", null, "location.href='`selfURL`?sis_menupath=`vsis-menupath`';", null);
+
+      function excluiRegistro() {
+         // Confirma exclusão ?
+         if(!confirm('`substitute(sis_idioma("msgConceitoConfirmaExclusao"), {&LBL-CONCEITO}, vsmgp-cod)`')) return false;
+         sis_addHiddenField(document.generico, "acao", "excluir");
+         sis_pageLoading();
+         $("*:disabled").prop('disabled', false);
+         $("#generico").submit();
+      } //excluiRegistro
+
+      function validaForm() {
+         var verro = false;
+         try {
+            if(modo == "incluir") {
+               if(smgp_nome.val() == "") {
+                  sis_queue_message('erro', '`replace(sis_idioma("msgPreenchimentoObrigCampo"), "~{1~}", sis_idioma("lblNome"))`', false);
+                  vfieldFocus = smgp_nome;
+                  verro = true;
+               }
+            }
+
+            if(verro == true) {
+               sis_show_messages();
+               setFocus();
+               return false;
+            }
+
+            if(modo == "incluir") {
+               smgp_cod.val("0");
+            }
+
+            sis_addHiddenField(document.generico, "acao", "salvar");
+            sis_pageLoading();
+            $("*:disabled").prop('disabled', false);
+            $("#generico").submit();
+         } catch(e) {
+            console.log(e);
+            alert("`sis_idioma("msgErroJavaScriptValidarForm")`");
+            return false;
+         }
+      } //validaForm
+
+      $(document).ready(function() {
+         if(modo == "incluir") {
+            smgp_nome.focus();
+         }
+      });
+   </script>
+
+<script language="SpeedScript">
+end procedure. /* p-detalhe */
+
+/* adiciona botoes padroes do sistema */
+{include_help.i}
+{include_imprimir.i}
+{include_favoritos.i}
+{include_prog_inicial.i}
+</script>
+</div>
+</body>
+</html>
+
+<script language="SpeedScript">
+
+/* ****************************** Procedures ******************************* */
+
+/*--------------------------------------------------------------------------
+Objetivo: Carrega variaveis e temp-table.
+----------------------------------------------------------------------------*/
+procedure p-carregar:
+
+   empty temp-table tt-cadastro.
+
+   case vacao:
+      when "montar t-princ" then do:
+         for each smg-processo no-lock:
+            create tt-cadastro.
+            buffer-copy smg-processo to tt-cadastro.
+         end.
+      end.
+
+      when "incluir" then do:
+         create tt-cadastro.
+      end.
+
+      when "editar" then do:
+         for first smg-processo no-lock where
+                   smg-processo.smgp-cod = vsmgp-cod:
+            create tt-cadastro.
+            buffer-copy smg-processo
+                     to tt-cadastro
+                 assign tt-cadastro.em-uso  = can-find(first smg-solicitacao no-lock where smg-solicitacao.smgp-cod = vsmgp-cod)
+                        tt-cadastro.em-exec = can-find(first smg-solicitacao no-lock where smg-solicitacao.smgp-cod = vsmgp-cod
+                                                                                       and smg-solicitacao.smgs-status < 3). /*concluido*/
+         end.
+      end.
+
+      when "salvar"  or
+      when "excluir" then do:
+         create tt-cadastro.
+         assign tt-cadastro.smgp-cod               = vsmgp-cod
+                tt-cadastro.smgp-nome              = vsmgp-nome
+                tt-cadastro.smgp-preventivo        = vsmgp-prev
+                tt-cadastro.smgp-obra-obrigatoria  = vsmgp-obra
+                tt-cadastro.smgp-ativo             = vsmgp-ativo
+                tt-cadastro.em-uso                 = can-find(first smg-solicitacao no-lock where smg-solicitacao.smgp-cod = vsmgp-cod)
+                tt-cadastro.em-exec                = can-find(first smg-solicitacao no-lock where smg-solicitacao.smgp-cod = vsmgp-cod
+                                                                                              and smg-solicitacao.smgs-status < 3). /*concluido*/
+      end.
+
+   end case. /* vacao */
+end procedure.
+
+/*--------------------------------------------------------------------------
+Objetivo: Persistir a inclusão/alteração de um registro.
+----------------------------------------------------------------------------*/
+procedure p-salvar:
+
+   find first tt-cadastro no-error.
+
+   run p-validar(vmodo).
+   if return-value = "erro":u then return "erro":u.
+
+   case vmodo:
+      when "incluir" then do:
+         /* Cria registro ------------------------------------------- */
+         vsmgp-cod = getUltimoCodigo() + 1.
+         create smg-processo.
+         assign smg-processo.smgp-cod              = vsmgp-cod
+                smg-processo.smgp-nome             = tt-cadastro.smgp-nome
+                smg-processo.smgp-preventivo       = tt-cadastro.smgp-preventivo
+                smg-processo.smgp-obra-obrigatoria = tt-cadastro.smgp-obra-obrigatoria
+                smg-processo.smgp-ativo            = tt-cadastro.smgp-ativo.
+         /* Mostra Mensagem e inclui LOG ----------------------------------- */
+         vmsg = substitute(sis_idioma("msgConceitoInclusaoRealizado"), {&LBL-CONCEITO}, vsmgp-cod, tt-cadastro.smgp-nome).
+         sis_queue_message("informacao", vmsg, false).
+         {include_log.i "geral" vmsg}
+      end.
+
+      when "editar" then do:
+         do while true:
+            find first smg-processo exclusive-lock where smg-processo.smgp-cod = tt-cadastro.smgp-cod no-error no-wait.
+            if avail smg-processo then do:
+               assign smg-processo.smgp-preventivo       = tt-cadastro.smgp-preventivo
+                      smg-processo.smgp-obra-obrigatoria = tt-cadastro.smgp-obra-obrigatoria
+                      smg-processo.smgp-ativo            = tt-cadastro.smgp-ativo.
+               leave.
+            end.
+         end.
+         /* Mostra Mensagem e inclui LOG ----------------------------------- */
+         vmsg = substitute(sis_idioma("msgConceitoAlteracaoRealizado"), {&LBL-CONCEITO}, tt-cadastro.smgp-cod, tt-cadastro.smgp-nome).
+         sis_queue_message("informacao", vmsg, false).
+         {include_log.i "geral" vmsg}
+      end.
+   end case. /* vmodo */
+
+   return "ok":u.
+
+   catch e-app as Progress.Lang.AppError:
+      sis_queue_message("erro", e-app:ReturnValue, false).
+      return "erro":u.
+   end catch.
+end procedure.
+
+/*--------------------------------------------------------------------------
+Objetivo: Validar a operação e excluir um registro existente.
+----------------------------------------------------------------------------*/
+procedure p-excluir:
+
+   find first tt-cadastro no-error.
+
+   run p-validar("excluir").
+   if return-value = "erro":u then return "erro":u.
+
+   do while true:
+      find first smg-processo exclusive-lock where smg-processo.smgp-cod = tt-cadastro.smgp-cod no-error no-wait.
+      if avail smg-processo then do:
+         delete smg-processo.
+         leave.
+      end.
+   end.
+
+   /* Mostra Mensagem e inclui LOG ----------------------------------- */
+   vmsg = substitute(sis_idioma("msgConceitoExclusaoRealizado"), {&LBL-CONCEITO}, tt-cadastro.smgp-cod, tt-cadastro.smgp-nome).
+   sis_queue_message("informacao", vmsg, false).
+   {include_log.i "geral" vmsg}
+
+   catch e-app as Progress.Lang.AppError:
+      sis_queue_message("erro", e-app:ReturnValue, false).
+      return "erro":u.
+   end catch.
+end procedure.
+
+/*--------------------------------------------------------------------------
+Objetivo: Validar as informações de inclusão/alteração de um registro.
+----------------------------------------------------------------------------*/
+procedure p-validar:
+   def input param p-acao as char no-undo.
+
+   /* valida se existe nome cadastrado */
+   if p-acao = "incluir" or
+      p-acao = "editar"  then do:
+      if can-find(first bf-smg-processo no-lock where
+                        bf-smg-processo.smgp-cod  <> tt-cadastro.smgp-cod and
+                        bf-smg-processo.smgp-nome  = tt-cadastro.smgp-nome) then do:
+         vmsg = substitute(sis_idioma("msgConceitoNomeExistente"), {&LBL-CONCEITO}, tt-cadastro.smgp-nome).
+         undo, throw new Progress.Lang.AppError(vmsg).
+      end.
+   end.
+
+   /* valida se existe codigo */
+   if p-acao = "editar" or
+      p-acao = "excluir"  then do:
+      if not can-find(first bf-smg-processo no-lock where bf-smg-processo.smgp-cod = tt-cadastro.smgp-cod) then do:
+         vmsg = substitute(sis_idioma("msgConceitoCodigoInvalido"), {&LBL-CONCEITO}, tt-cadastro.smgp-cod).
+         undo, throw new Progress.Lang.AppError(vmsg).
+      end.
+   end.
+
+   case p-acao:
+      when "incluir" then do:
+         /* valida se já existe codigo cadastrado */
+         if can-find(first bf-smg-processo no-lock where bf-smg-processo.smgp-cod = tt-cadastro.smgp-cod) then do:
+            vmsg = substitute(sis_idioma("msgConceitoCodigoExistente"), {&LBL-CONCEITO}, tt-cadastro.smgp-cod).
+            undo, throw new Progress.Lang.AppError(vmsg).
+         end.
+      end.
+
+      when "editar"  then do:
+         /* valida se pode inativar */
+         if tt-cadastro.smgp-ativo = no and
+            tt-cadastro.em-exec    = yes then do:
+            vmsg = substitute(sis_idioma("msgConceitoNaoFoiPossivelInativarEmUso"), {&LBL-CONCEITO}, tt-cadastro.smgp-nome).
+            tt-cadastro.smgp-ativo = yes.
+            undo, throw new Progress.Lang.AppError(vmsg).
+         end.
+      end.
+
+      when "excluir" then do:
+         /* valida se esta em uso */
+         if tt-cadastro.em-uso = yes then do:
+            vmsg = substitute(sis_idioma("msgConceitoNaoFoiPossivelExcluirEmUso"), {&LBL-CONCEITO}, tt-cadastro.smgp-nome).
+            undo, throw new Progress.Lang.AppError(vmsg).
+         end.
+      end.
+   end case. /* p-acao */
+
+   return "ok":u.
+
+   catch e-app as Progress.Lang.AppError:
+      sis_queue_message("erro", e-app:ReturnValue, false).
+      return "erro":u.
+   end catch.
+end procedure.
+
+/* ****************************** Functions ******************************** */
+
+/*--------------------------------------------------------------------------
+Objetivo: Retorna ultimo código da tabela smg-processo.
+----------------------------------------------------------------------------*/
+function getUltimoCodigo returns int:
+   for last bf-smg-processo fields(smgp-cod) no-lock:
+      return bf-smg-processo.smgp-cod.
+   end.
+   return 0.
+end function.
+
+</script>
