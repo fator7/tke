@@ -38,7 +38,7 @@ repeat:
         &hide  = yes
         &nmax  = 1500
         &subm  = "[Selecionar]  [Imprimir]  [Fim]"}
-      if xopc = "F" then return.
+      if xopc = "F" then next.
       if xopc = "I" then do:
          {utiir80.i
           &rel-nome = "Cod. de Municipios"
@@ -114,7 +114,7 @@ repeat:
             end.
             leave.
          end.
-         else return.
+         else leave.
       end. /* repeat */
    end.
    hide frame f3.
